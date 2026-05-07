@@ -1,76 +1,101 @@
-// Netlify Function: /netlify/functions/feed
-// Fetches YouTube RSS on the server — no CORS issues
+// netlify/functions/feed.js
+// CommonJS syntax — works on ALL Netlify Node versions
 
 const https = require('https');
 
 const CHANNEL_ID = 'UCML5eZHbzv6pZ-iwKVZW6Ow';
-const RSS_URL = `https://www.youtube.com/feeds/videos.xml?channel_id=${CHANNEL_ID}`;
 
-function httpsGet(url) {
+function get(url) {
   return new Promise((resolve, reject) => {
-    https.get(url, {
+    const req = https.get(url, {
       headers: {
-        'User-Agent': 'Mozilla/5.0 (compatible; OduuIspoortii/1.0)',
-        'Accept': 'application/xml, text/xml, */*',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        'Accept': 'text/xml, application/xml, */*',
+        'Accept-Language': 'en-US,en;q=0.9',
       }
-    }, res => {
-      let data = '';
-      res.on('data', chunk => data += chunk);
-      res.on('end', () => resolve({ status: res.statusCode, body: data }));
-    }).on('error', reject);
+    }, (res) => {
+      // Follow redirects
+      if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+        return get(res.headers.location).then(resolve).catch(reject);
+      }
+      let body = '';
+      res.setEncoding('utf8');
+      res.on('data', chunk => { body += chunk; });
+      res.on('end', () => resolve({ status: res.statusCode, body }));
+    });
+    req.on('error', reject);
+    req.setTimeout(10000, () => { req.destroy(); reject(new Error('Timeout')); });
   });
 }
 
-function parseEntry(entry) {
-  const get = tag => {
-    const m = entry.match(new RegExp(`<${tag}[^>]*>([\\s\\S]*?)<\/${tag}>`, 'i'));
-    return m ? m[1].trim() : '';
-  };
-  const attr = (tag, a) => {
-    const m = entry.match(new RegExp(`<${tag}[^>]+${a}="([^"]*)"`, 'i'));
-    return m ? m[1] : '';
-  };
-
-  const videoId = get('yt:videoId') || attr('link', 'href').match(/v=([^&]+)/)?.[1] || '';
-  const title   = get('title').replace(/<!\[CDATA\[|\]\]>/g, '').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#39;/g,"'");
-  const published = get('published');
-  const views   = attr('media:statistics', 'views') || '0';
-  const description = get('media:description').replace(/<!\[CDATA\[|\]\]>/g, '').slice(0, 200);
-
-  return { videoId, title, published, views, description };
+function clean(str) {
+  return (str || '')
+    .replace(/<!\[CDATA\[|\]\]>/g, '')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .trim();
 }
 
-exports.handler = async () => {
+function parseXML(xml) {
+  const entries = xml.match(/<entry>[\s\S]*?<\/entry>/gi) || [];
+  return entries.map(e => {
+    const tag = (name) => {
+      const m = e.match(new RegExp('<' + name + '[^>]*>([\\s\\S]*?)<\\/' + name + '>', 'i'));
+      return m ? clean(m[1]) : '';
+    };
+    const attr = (name, a) => {
+      const m = e.match(new RegExp('<' + name + '[^>]+' + a + '="([^"]*)"', 'i'));
+      return m ? m[1] : '';
+    };
+    return {
+      videoId:   tag('yt:videoId'),
+      title:     tag('title'),
+      published: tag('published'),
+      views:     attr('media:statistics', 'views') || '0',
+    };
+  }).filter(v => v.videoId && v.title);
+}
+
+exports.handler = async function(event, context) {
+  const CORS = {
+    'Content-Type': 'application/json',
+    'Access-Control-Allow-Origin': '*',
+    'Cache-Control': 'public, max-age=300',
+  };
+
+  if (event.httpMethod === 'OPTIONS') {
+    return { statusCode: 200, headers: CORS, body: '' };
+  }
+
+  const RSS = 'https://www.youtube.com/feeds/videos.xml?channel_id=' + CHANNEL_ID;
+
   try {
-    const { status, body } = await httpsGet(RSS_URL);
+    const { status, body } = await get(RSS);
 
     if (status !== 200) {
       return {
-        statusCode: 502,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ error: `YouTube returned ${status}` }),
+        statusCode: 200,
+        headers: CORS,
+        body: JSON.stringify({ error: 'YouTube HTTP ' + status, videos: [] }),
       };
     }
 
-    // Extract all <entry> blocks
-    const entryMatches = body.match(/<entry>[\s\S]*?<\/entry>/gi) || [];
-    const videos = entryMatches.map(parseEntry).filter(v => v.videoId && v.title);
+    const videos = parseXML(body);
 
     return {
       statusCode: 200,
-      headers: {
-        'Content-Type': 'application/json',
-        'Access-Control-Allow-Origin': '*',
-        'Cache-Control': 'public, max-age=300', // cache 5 minutes
-      },
-      body: JSON.stringify({ videos, fetchedAt: new Date().toISOString() }),
+      headers: CORS,
+      body: JSON.stringify({ videos, count: videos.length, fetchedAt: new Date().toISOString() }),
     };
 
   } catch (err) {
     return {
-      statusCode: 500,
-      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ error: err.message }),
+      statusCode: 200,
+      headers: CORS,
+      body: JSON.stringify({ error: err.message, videos: [] }),
     };
   }
 };
