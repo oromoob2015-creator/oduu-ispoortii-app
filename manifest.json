@@ -1,0 +1,35 @@
+{
+  "name": "Oduu Ispoortii",
+  "short_name": "Ispoortii",
+  "description": "Oduu Ispoortii fi Odeeffannoo Haaraa Afaan Oromootiin",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0a0a0a",
+  "theme_color": "#0a0a0a",
+  "orientation": "portrait-primary",
+  "lang": "om",
+  "categories": ["sports", "news", "entertainment"],
+  "icons": [
+    {
+      "src": "https://img.icons8.com/color/192/youtube-play.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "https://img.icons8.com/color/512/youtube-play.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Viidiyoolee Haaraa",
+      "short_name": "Haaraa",
+      "description": "Viidiyoolee haaraa ilaali",
+      "url": "/",
+      "icons": [{ "src": "https://img.icons8.com/color/96/youtube-play.png", "sizes": "96x96" }]
+    }
+  ]
+}

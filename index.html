@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="om">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Oduu Ispoortii" />
+  <meta name="description" content="Oduu Ispoortii — Oduu ispoortii fi odeeffannoo haaraa Afaan Oromootiin" />
+  <title>Oduu Ispoortii</title>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --red:#e8132a; --red-dark:#b50f20; --red-glow:rgba(232,19,42,0.28);
+      --white:#f0f0f0; --black:#0a0a0a; --card:#191919; --border:#252525; --muted:#686868;
+      --safe-top:env(safe-area-inset-top,0px);
+      --safe-bot:env(safe-area-inset-bottom,0px);
+    }
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    html,body{height:100%;background:var(--black);color:var(--white);font-family:'Barlow',sans-serif;overflow-x:hidden;overscroll-behavior:none;-webkit-font-smoothing:antialiased}
+
+    /* ── HEADER ── */
+    header{position:sticky;top:0;z-index:100;background:var(--black);border-bottom:2px solid var(--red);padding-top:var(--safe-top)}
+    .hdr{display:flex;align-items:center;justify-content:space-between;padding:11px 16px}
+    .logo-wrap{display:flex;align-items:center;gap:10px}
+    .logo-icon{width:40px;height:40px;background:var(--red);border-radius:10px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px var(--red-glow);flex-shrink:0}
+    .logo-icon svg{width:22px;height:22px;fill:white}
+    .logo-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1.5px;line-height:1}
+    .logo-sub{font-size:9px;color:var(--red);letter-spacing:2px;font-weight:700;text-transform:uppercase}
+    .live-pill{display:flex;align-items:center;gap:6px;background:var(--red);padding:5px 10px;border-radius:4px;font-size:11px;font-weight:800;letter-spacing:1px}
+    .dot{width:6px;height:6px;background:white;border-radius:50%;animation:blink 1.2s ease-in-out infinite}
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+
+    /* ── TICKER ── */
+    .ticker{background:var(--red);overflow:hidden;white-space:nowrap;height:25px;display:flex;align-items:center}
+    .ticker-lbl{background:var(--red-dark);padding:0 12px;font-size:10px;font-weight:800;letter-spacing:1.5px;height:100%;display:flex;align-items:center;flex-shrink:0;text-transform:uppercase}
+    .ticker-inner{display:inline-block;animation:scroll 32s linear infinite;font-size:11px;font-weight:600;padding-left:24px}
+    @keyframes scroll{0%{transform:translateX(100vw)}100%{transform:translateX(-100%)}}
+
+    /* ── VIEWS ── */
+    .view{display:none}.view.active{display:block}
+
+    /* ── SEARCH ── */
+    .search-bar{padding:13px 16px 0}
+    .search-wrap{position:relative}
+    .search-input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:8px;padding:10px 38px 10px 14px;color:var(--white);font-family:'Barlow',sans-serif;font-size:14px;outline:none;transition:border-color .2s}
+    .search-input:focus{border-color:var(--red)}
+    .search-input::placeholder{color:var(--muted)}
+    .s-icon{position:absolute;right:12px;top:50%;transform:translateY(-50%)}
+    .s-icon svg{width:16px;height:16px;stroke:var(--muted);fill:none;stroke-width:2}
+
+    /* ── SECTION LABEL ── */
+    .sec-label{font-family:'Barlow Condensed',sans-serif;font-size:12px;font-weight:800;letter-spacing:2.5px;color:var(--red);text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+    .sec-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+    /* ── HERO ── */
+    .hero-sec{padding:15px 16px 0}
+    .hero-card{background:var(--card);border-radius:12px;overflow:hidden;cursor:pointer;border:1px solid var(--border);transition:transform .18s}
+    .hero-card:active{transform:scale(.985)}
+    .thumb-wrap{position:relative}
+    .hero-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#181818}
+    .video-img{width:100%;aspect-ratio:16/9;object-fit:cover;display:block;background:#181818}
+    .play-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.2)}
+    .play-btn{width:52px;height:52px;background:var(--red);border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 0 22px var(--red-glow)}
+    .play-btn svg{width:20px;height:20px;fill:white;margin-left:3px}
+    .play-sm{width:34px;height:34px}
+    .play-sm svg{width:13px;height:13px;margin-left:2px}
+    .badge-new{position:absolute;top:10px;left:10px;background:var(--red);color:white;font-size:9px;font-weight:800;letter-spacing:1.5px;padding:3px 8px;border-radius:3px;text-transform:uppercase}
+    .hero-info{padding:13px}
+    .hero-info h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;line-height:1.2;margin-bottom:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .meta{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:7px}
+    .meta-dot{width:3px;height:3px;background:var(--red);border-radius:50%}
+
+    /* ── GRID ── */
+    .grid-sec{padding:15px 16px 110px}
+    .vgrid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+    .vcard{background:var(--card);border-radius:10px;overflow:hidden;cursor:pointer;border:1px solid var(--border);transition:transform .18s,border-color .18s}
+    .vcard:active{transform:scale(.96);border-color:var(--red)}
+    .vinfo{padding:9px 10px 10px}
+    .vinfo h3{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;line-height:1.25;margin-bottom:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .vinfo .meta{font-size:10px}
+
+    /* ── SKELETON ── */
+    .sk{background:linear-gradient(90deg,#191919 25%,#232323 50%,#191919 75%);background-size:200% 100%;animation:shim 1.4s infinite;border-radius:5px}
+    .sk-t{width:100%;aspect-ratio:16/9;border-radius:0}
+    .sk-l{height:13px;margin:8px 10px}
+    .sk-s{width:55%}
+    @keyframes shim{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+    /* ── BOTTOM NAV ── */
+    .bnav{position:fixed;bottom:0;left:0;right:0;background:rgba(10,10,10,.97);backdrop-filter:blur(14px);border-top:1px solid var(--border);display:flex;padding:8px 0 var(--safe-bot);z-index:100}
+    .ni{display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:5px 0;flex:1;border-radius:8px}
+    .ni-icon{font-size:22px}
+    .ni-lbl{font-size:10px;font-weight:700;color:var(--muted);letter-spacing:.5px;transition:color .15s}
+    .ni.active .ni-lbl{color:var(--red)}
+
+    /* ── MODAL ── */
+    .modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.96);z-index:200;flex-direction:column}
+    .modal.open{display:flex}
+    .modal-x{position:absolute;top:calc(var(--safe-top) + 12px);right:14px;width:36px;height:36px;background:var(--card);border:1px solid var(--border);border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;z-index:10}
+    .modal-x svg{width:16px;height:16px;stroke:var(--white);stroke-width:2.5;fill:none}
+    .modal-vid{width:100%;aspect-ratio:16/9;margin-top:calc(var(--safe-top) + 56px)}
+    .modal-vid iframe{width:100%;height:100%;border:none}
+    .modal-body{padding:15px;overflow-y:auto;flex:1}
+    .modal-body h2{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;line-height:1.2;margin-bottom:7px}
+    .yt-btn{display:inline-flex;align-items:center;gap:8px;background:var(--red);color:white;padding:11px 18px;border-radius:7px;font-weight:700;font-size:13px;text-decoration:none;margin-top:12px;letter-spacing:.5px}
+
+    /* ── ABOUT ── */
+    .about-wrap{padding:22px 18px 110px}
+    .about-top{text-align:center;margin-bottom:26px}
+    .alogo{width:84px;height:84px;background:var(--red);border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 13px;box-shadow:0 0 32px var(--red-glow)}
+    .alogo svg{width:42px;height:42px;fill:white}
+    .aname{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:2px}
+    .atag{color:var(--muted);font-size:13px;margin-top:3px}
+    .acard{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:17px;margin-bottom:13px}
+    .acard h3{font-family:'Barlow Condensed',sans-serif;font-weight:800;font-size:14px;letter-spacing:1.5px;color:var(--red);margin-bottom:7px;text-transform:uppercase}
+    .acard p{font-size:14px;color:#b0b0b0;line-height:1.65}
+    .sub-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--red);color:white;padding:16px;border-radius:10px;font-weight:800;font-size:16px;text-decoration:none;letter-spacing:.5px;margin-top:4px;box-shadow:0 6px 24px var(--red-glow)}
+
+    /* ── STATE ── */
+    .err{margin:14px 16px;padding:13px;background:rgba(232,19,42,.08);border:1px solid var(--red);border-radius:8px;font-size:13px;color:#ff6b7a;text-align:center;display:none}
+    .empty-grid{grid-column:1/-1;text-align:center;padding:36px 20px;color:var(--muted);font-size:14px}
+
+    /* ── RETRY BTN ── */
+    .retry-btn{display:inline-block;margin-top:10px;background:var(--red);color:white;border:none;padding:9px 20px;border-radius:6px;font-weight:700;font-size:13px;cursor:pointer;font-family:'Barlow',sans-serif}
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="hdr">
+    <div class="logo-wrap">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M23 7s-.3-2-1.2-2.8C20.7 3 19.4 3 18.8 2.9 16.1 2.8 12 2.8 12 2.8s-4.1 0-6.8.1C4.6 3 3.3 3 2.2 4.2 1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.3 21.6 12 21.6 12 21.6s4.1 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.1l8 3.7-8 3.7z"/></svg>
+      </div>
+      <div>
+        <div class="logo-title">Oduu Ispoortii</div>
+        <div class="logo-sub">Oduu ispoortii afaan oromoo</div>
+      </div>
+    </div>
+    <div class="live-pill"><div class="dot"></div>LIVE</div>
+  </div>
+  <div class="ticker">
+    <div class="ticker-lbl">⚽ ODUU</div>
+    <div class="ticker-inner" id="tickerText">Baga nagaan dhuftan Oduu Ispoortii — Oduu ispoortii addunyaa fi biyya keessaa Afaan Oromootiin • Subscribe godhaa beeksifama haaraa argachuuf • Ispoortii keenya hordofaa!</div>
+  </div>
+</header>
+
+<!-- HOME VIEW -->
+<div class="view active" id="viewHome">
+
+  <div class="search-bar">
+    <div class="search-wrap">
+      <input type="search" class="search-input" id="searchInput" placeholder="Viidiyoo barbaadi…" autocomplete="off" />
+      <span class="s-icon"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></span>
+    </div>
+  </div>
+
+  <div class="err" id="errBox">
+    Viidiyooleen fe'amuu hin dandeenye. Interneetii mirkaneeffadhaa fi deebi'ii yaali.
+    <br/><button class="retry-btn" onclick="init()">Deebi'ii Yaali</button>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero-sec">
+    <div class="sec-label">🔥 Haaraa</div>
+    <div id="heroWrap">
+      <div class="hero-card" style="cursor:default">
+        <div class="sk sk-t"></div>
+        <div class="hero-info">
+          <div class="sk sk-l" style="width:88%;margin:0 0 8px"></div>
+          <div class="sk sk-l sk-s" style="margin:0"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID -->
+  <div class="grid-sec">
+    <div class="sec-label">📺 Viidiyoolee</div>
+    <div class="vgrid" id="videoGrid">
+      <div class="vcard" style="cursor:default"><div class="sk sk-t"></div><div style="padding:10px"><div class="sk sk-l"></div><div class="sk sk-l sk-s"></div></div></div>
+      <div class="vcard" style="cursor:default"><div class="sk sk-t"></div><div style="padding:10px"><div class="sk sk-l"></div><div class="sk sk-l sk-s"></div></div></div>
+      <div class="vcard" style="cursor:default"><div class="sk sk-t"></div><div style="padding:10px"><div class="sk sk-l"></div><div class="sk sk-l sk-s"></div></div></div>
+      <div class="vcard" style="cursor:default"><div class="sk sk-t"></div><div style="padding:10px"><div class="sk sk-l"></div><div class="sk sk-l sk-s"></div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ABOUT VIEW -->
+<div class="view" id="viewAbout">
+  <div class="about-wrap">
+    <div class="about-top">
+      <div class="alogo">
+        <svg viewBox="0 0 24 24"><path d="M23 7s-.3-2-1.2-2.8C20.7 3 19.4 3 18.8 2.9 16.1 2.8 12 2.8 12 2.8s-4.1 0-6.8.1C4.6 3 3.3 3 2.2 4.2 1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.3 21.6 12 21.6 12 21.6s4.1 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.1l8 3.7-8 3.7z"/></svg>
+      </div>
+      <div class="aname">Oduu Ispoortii</div>
+      <div class="atag">Oduu Ispoortii fi Odeeffannoo Haaraa</div>
+    </div>
+
+    <div class="acard">
+      <h3>🌍 Nu Eenyu?</h3>
+      <p>Oduu Ispoortii channeliin ispoortii addunyaa fi biyya keessaa — kubbaa miilaa, atileetiksii, fi ispoortii biroo — oduu dhugaa fi odeeffannoo haaraa Afaan Oromootiin dabarsina.</p>
+    </div>
+
+    <div class="acard">
+      <h3>📲 App Kana Maashina Keerratti Fe'i</h3>
+      <p>Chrome browser bani → fuula kana bani → gadi buusi menu sanduuqa argachuuf → <strong>"Gara Screen Mana Fe'i"</strong> tuqi. App akka native Android appiitti bana — Play Store hin barbaachisu!</p>
+    </div>
+
+    <div class="acard">
+      <h3>📡 Channel Keenya YouTube</h3>
+      <p>Viidiyooleen hundinuu kallattumaan YouTube irraa fe'amu. Subscribe godhaa beeksifama haaraa argachuuf!</p>
+    </div>
+
+    <div class="acard">
+      <h3>🔁 Viidiyoolee Yeroo Haaraa Argachuuf</h3>
+      <p>Viidiyooleen daqiiqaa 5 keessatti update ta'u. App cufii banaa — viidiyoolee haaraa ni argattu!</p>
+    </div>
+
+    <a class="sub-btn" href="https://youtube.com/@oduuispoortii" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M23 7s-.3-2-1.2-2.8C20.7 3 19.4 3 18.8 2.9 16.1 2.8 12 2.8 12 2.8s-4.1 0-6.8.1C4.6 3 3.3 3 2.2 4.2 1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.3 21.6 12 21.6 12 21.6s4.1 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.1l8 3.7-8 3.7z"/></svg>
+      YouTube Subscribe Godhaa
+    </a>
+  </div>
+</div>
+
+<!-- BOTTOM NAV -->
+<nav class="bnav">
+  <div class="ni active" id="navHome" onclick="switchTab('home')">
+    <span class="ni-icon">🏠</span>
+    <span class="ni-lbl">Mana</span>
+  </div>
+  <div class="ni" id="navAbout" onclick="switchTab('about')">
+    <span class="ni-icon">ℹ️</span>
+    <span class="ni-lbl">Nu Wegen</span>
+  </div>
+</nav>
+
+<!-- VIDEO MODAL -->
+<div class="modal" id="modal">
+  <div class="modal-x" onclick="closeModal()">
+    <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </div>
+  <div class="modal-vid">
+    <iframe id="modalFrame" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+  </div>
+  <div class="modal-body">
+    <h2 id="modalTitle"></h2>
+    <div class="meta" id="modalMeta"></div>
+    <a class="yt-btn" id="modalLink" href="#" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="white"><path d="M23 7s-.3-2-1.2-2.8C20.7 3 19.4 3 18.8 2.9 16.1 2.8 12 2.8 12 2.8s-4.1 0-6.8.1C4.6 3 3.3 3 2.2 4.2 1.3 5 1 7 1 7S.7 9.1.7 11.2v2c0 2.1.3 4.2.3 4.2s.3 2 1.2 2.8c1.1 1.2 2.6 1.1 3.3 1.2C7.3 21.6 12 21.6 12 21.6s4.1 0 6.8-.2c.6-.1 1.9-.1 3-1.3.9-.8 1.2-2.8 1.2-2.8s.3-2.1.3-4.2v-2C23.3 9.1 23 7 23 7zM9.7 15.5V8.1l8 3.7-8 3.7z"/></svg>
+      YouTube irratti bani
+    </a>
+  </div>
+</div>
+
+<script>
+  // ── HELPERS ──
+  const $  = id => document.getElementById(id);
+  const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+  const unesc = s => s.replace(/&#39;/g,"'").replace(/&quot;/g,'"').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>');
+
+  function timeAgo(d) {
+    const s = Math.floor((Date.now() - new Date(d)) / 1000);
+    if (s < 60)       return 'Amma dhumaan';
+    if (s < 3600)     return Math.floor(s/60)      + ' daqiiqaa dura';
+    if (s < 86400)    return Math.floor(s/3600)     + ' sa\'a dura';
+    if (s < 604800)   return Math.floor(s/86400)    + ' guyyaa dura';
+    if (s < 2592000)  return Math.floor(s/604800)   + ' torbee dura';
+    if (s < 31536000) return Math.floor(s/2592000)  + ' ji\'a dura';
+    return Math.floor(s/31536000) + ' waggaa dura';
+  }
+
+  function fmtViews(v) {
+    const n = parseInt(v)||0;
+    if (!n) return '';
+    if (n>=1e6) return (n/1e6).toFixed(1)+'M ilaalame';
+    if (n>=1000) return (n/1000).toFixed(1)+'K ilaalame';
+    return n+' ilaalame';
+  }
+
+  const thumb = (id, q='mqdefault') => `https://img.youtube.com/vi/${id}/${q}.jpg`;
+
+  // ── DATA ──
+  let allVideos = [], filtered = [];
+
+  async function fetchVideos() {
+    // Call our own Netlify Function — no CORS issues!
+    const res = await fetch('/.netlify/functions/feed', { signal: AbortSignal.timeout(10000) });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+    return data.videos || [];
+  }
+
+  // ── RENDER HERO ──
+  function renderHero(v) {
+    $('heroWrap').innerHTML = `
+      <div class="hero-card" onclick="openVideo('${v.videoId}','${esc(v.title)}','${v.published}','${v.views}')">
+        <div class="thumb-wrap">
+          <img class="hero-img" src="${thumb(v.videoId,'hqdefault')}" alt="${esc(v.title)}" loading="eager"
+               onerror="this.src='${thumb(v.videoId)}'"/>
+          <div class="play-ov"><div class="play-btn"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+          <span class="badge-new">Haaraa</span>
+        </div>
+        <div class="hero-info">
+          <h2>${esc(v.title)}</h2>
+          <div class="meta">
+            <span>${timeAgo(v.published)}</span>
+            ${parseInt(v.views)>0?`<span class="meta-dot"></span><span>${fmtViews(v.views)}</span>`:''}
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // ── RENDER GRID ──
+  function renderGrid(videos) {
+    const rest = videos.slice(1);
+    if (!rest.length) {
+      $('videoGrid').innerHTML = `<div class="empty-grid">Viidiyoo argamuu hin dandeenye.</div>`;
+      return;
+    }
+    $('videoGrid').innerHTML = rest.map(v => `
+      <div class="vcard" onclick="openVideo('${v.videoId}','${esc(v.title)}','${v.published}','${v.views}')">
+        <div class="thumb-wrap">
+          <img class="video-img" src="${thumb(v.videoId)}" alt="${esc(v.title)}" loading="lazy"/>
+          <div class="play-ov"><div class="play-btn play-sm"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg></div></div>
+        </div>
+        <div class="vinfo">
+          <h3>${esc(v.title)}</h3>
+          <div class="meta"><span>${timeAgo(v.published)}</span></div>
+        </div>
+      </div>`).join('');
+  }
+
+  // ── MODAL ──
+  function openVideo(videoId, title, published, views) {
+    $('modalFrame').src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`;
+    $('modalTitle').textContent = unesc(title);
+    const vw = parseInt(views)||0;
+    $('modalMeta').innerHTML = `<span>${timeAgo(published)}</span>${vw>0?`<span class="meta-dot"></span><span>${fmtViews(views)}</span>`:''}`;
+    $('modalLink').href = `https://www.youtube.com/watch?v=${videoId}`;
+    $('modal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeModal() {
+    $('modalFrame').src = '';
+    $('modal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  $('modal').addEventListener('click', e => { if (e.target === $('modal')) closeModal(); });
+
+  // ── TABS ──
+  function switchTab(t) {
+    $('viewHome').classList.toggle('active', t==='home');
+    $('viewAbout').classList.toggle('active', t==='about');
+    $('navHome').classList.toggle('active', t==='home');
+    $('navAbout').classList.toggle('active', t==='about');
+    window.scrollTo(0,0);
+  }
+
+  // ── SEARCH ──
+  $('searchInput').addEventListener('input', function() {
+    const q = this.value.toLowerCase().trim();
+    filtered = q ? allVideos.filter(v => v.title.toLowerCase().includes(q)) : allVideos;
+    if (filtered.length) renderHero(filtered[0]);
+    renderGrid(filtered);
+  });
+
+  // ── INIT ──
+  async function init() {
+    $('errBox').style.display = 'none';
+    // Reset skeletons
+    $('heroWrap').innerHTML = `<div class="hero-card" style="cursor:default"><div class="sk sk-t"></div><div class="hero-info"><div class="sk sk-l" style="width:88%;margin:0 0 8px"></div><div class="sk sk-l sk-s" style="margin:0"></div></div></div>`;
+    $('videoGrid').innerHTML = `<div class="vcard" style="cursor:default"><div class="sk sk-t"></div><div style="padding:10px"><div class="sk sk-l"></div><div class="sk sk-l sk-s"></div></div></div>`.repeat(4);
+
+    try {
+      const videos = await fetchVideos();
+      if (!videos.length) throw new Error('Viidiyoo duwwaa');
+      allVideos = videos;
+      filtered  = videos;
+      renderHero(videos[0]);
+      renderGrid(videos);
+      // Update ticker
+      $('tickerText').textContent = videos.slice(0,8).map(v=>v.title).join('   •   ');
+    } catch(e) {
+      console.error(e);
+      $('errBox').style.display = 'block';
+      $('heroWrap').innerHTML = `<div style="padding:30px;text-align:center;color:var(--muted);font-size:14px">Viidiyooleen hin argamne</div>`;
+      $('videoGrid').innerHTML = `<div class="empty-grid">Deebi'ii yaali</div>`;
+    }
+  }
+
+  // Service Worker
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(()=>{});
+  }
+
+  init();
+</script>
+</body>
+</html>
